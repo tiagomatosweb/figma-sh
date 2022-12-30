@@ -12,8 +12,10 @@ const cancel = () => {
 </script>
 
 <template>
-  <h2>Rectangle Creator</h2>
-  <p>Count: <input id="count" v-model="count"></p>
-  <button @click="create">Create</button>
-  <button @click="cancel">Cancel</button>
+  <div>
+    <h2>Rectangle Creator</h2>
+    <p>Count: <input id="count" v-model="count"></p>
+    <button @click="create">Create</button>
+    <button @click="cancel">Cancel</button>
+  </div>
 </template>
