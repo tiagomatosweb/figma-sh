@@ -5,7 +5,7 @@
                 v-bind:key="line">{{ line }}</span>
         </div>
         <div class="relative w-full min-h-full">
-            <textarea id="teste"
+            <textarea id="codeContent" 
                 class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent overflow-hidden"
                 placeholder="Seu código aqui..." spellcheck="false" v-model="textCodeValue" name="code"></textarea>
 
@@ -30,7 +30,6 @@ function loadTheme() {
         theme: props.config.theme.toLowerCase(),
         langs: [props.config.lang]
     }).then(highlighter => {
-        console.log('executou')
         setTheme.value = highlighter
         htmlCode.value = highlighter.codeToHtml(`${textCodeValue.value}`, { lang: props.config.lang })
         emit('set-load')
@@ -55,7 +54,7 @@ watch(props.config, () => {
 </script>
 
 <style>
-#teste {
+#codeContent {
     margin: 0;
     padding: 0;
     outline: unset;
@@ -70,11 +69,6 @@ watch(props.config, () => {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 1em;
 }
-
-#countDisplay {
-   
-}
-
 textarea:focus {
     outline: none;
 }
