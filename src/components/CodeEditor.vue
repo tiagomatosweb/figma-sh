@@ -17,7 +17,7 @@
 <script setup>
 import { ref, watch, onMounted, defineEmits } from "vue";
 import { getHighlighter } from 'shiki'
-const textCodeValue = ref('TESTE')
+const textCodeValue = ref('')
 const codeLines = ref(1)
 const htmlCode = ref('')
 const setTheme = ref({})
