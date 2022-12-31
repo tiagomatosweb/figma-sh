@@ -15,22 +15,26 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineEmits } from "vue";
+import { ref, watch, onMounted, defineEmits, defineProps } from "vue";
 import { getHighlighter } from 'shiki'
 const textCodeValue = ref('')
 const codeLines = ref(1)
 const htmlCode = ref('')
 const setTheme = ref({})
+const props =  defineProps({
+    config: Object
+})
 const emit = defineEmits(['set-load', 'set-background'])
 function loadTheme() {
     getHighlighter({
-        theme: 'dracula',
-        langs: ['javascript', 'js']
+        theme: props.config.theme.toLowerCase(),
+        langs: [props.config.lang]
     }).then(highlighter => {
         console.log('executou')
         setTheme.value = highlighter
+        htmlCode.value = highlighter.codeToHtml(`${textCodeValue.value}`, { lang: props.config.lang })
         emit('set-load')
-        emit('set-background', highlighter.getBackgroundColor('dracula'))
+        emit('set-background', highlighter.getBackgroundColor(props.config.theme.toLowerCase()))
     })
 }
 
@@ -40,7 +44,12 @@ onMounted(async () => {
 
 watch(textCodeValue, async () => {
     codeLines.value = textCodeValue.value.split('\n').length;
-    htmlCode.value = await setTheme.value.codeToHtml(`${textCodeValue.value}`, { lang: 'js' })
+    htmlCode.value = await setTheme.value.codeToHtml(`${textCodeValue.value}`, { lang: props.config.lang })
+})
+
+watch(props.config, () => {
+    loadTheme()
+
 })
 
 </script>

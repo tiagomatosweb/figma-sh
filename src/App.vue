@@ -33,7 +33,7 @@
         </div>
 
         <div class="rounded-lg py-4 pb-8 h-[500px] overflow-scroll" :style="`background-color: ${backgroundColor}`">
-            <CodeEditor @set-load="loadScreen = false" @set-background="setBackground" />
+            <CodeEditor @set-load="loadScreen = false" @set-background="setBackground" :config="currentConfig"/>
         </div>
 
         <CreateRectangle />
@@ -97,7 +97,7 @@ const config = ref({
 
 const currentConfig = ref({
     lang: 'js',
-    theme: 'dracula'
+    theme: 'nord'
 })
 
 function setConfig(key, value){
