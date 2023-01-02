@@ -62,6 +62,7 @@
     </div>
 
     <div
+      id="remover"
       class="rounded-lg py-2 pb-8 h-[500px] overflow-scroll px-2"
       :style="`background-color: ${backgroundColor}`"
     >

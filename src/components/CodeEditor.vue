@@ -41,8 +41,10 @@ function loadConfig() {
   });
 }
 function updateConfig(){
-  codeMirror.defineMode()
-  emit("set-load");
+  const node = document.getElementById('remover')
+  const removed = document.querySelector('.CodeMirror')
+  node.removeChild(removed)
+  loadConfig()
 }
 onMounted(async () => {
   loadConfig();
