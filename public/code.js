@@ -7,20 +7,23 @@ figma.ui.onmessage = async (msg) => {
         text.characters = msg.code
 
         // Set the general color
-        text.setRangeFills(0, text.characters.length, [
-            {
-                blendMode: 'NORMAL',
-                color: {
-                    r: 1, g: 1, b: 1,
-                },
-                opacity: 1,
-                type: 'SOLID',
-                visible: true,
-            }
-        ])
+        // text.setRangeFills(0, text.characters.length, [
+        //     {
+        //         blendMode: 'NORMAL',
+        //         color: {
+        //             r: 1, g: 1, b: 1,
+        //         },
+        //         opacity: 1,
+        //         type: 'SOLID',
+        //         visible: true,
+        //     }
+        // ])
 
         // Set color by range
         msg.code_highlighted.forEach((node) => {
+            if (!node.end) {
+                console.log(node.end);
+            }
             text.setRangeFills(node.start, node.end, [
                 {
                     blendMode: 'NORMAL',

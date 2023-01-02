@@ -35,33 +35,35 @@
         </div>
 
         <div class="flex-1">
-            <Prismjs ref="primsjs" />
+            <AceEditor ref="aceEditor" />
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import Prismjs from './components/Prismjs.vue';
+// import Prismjs from './components/Prismjs.vue';
 import { walkTree } from './utils/walkTree';
 import { calculateRGB } from './utils/calculateRGB';
 import { countNodeLength } from './utils/countNodeLength'
 import { usePrism } from './composables/usePrism';
+import AceEditor from './components/AceEditor.vue';
 
 const { languages, currentLanguage, theme } = usePrism();
 const primsjs = ref(null)
+const aceEditor = ref(null)
 
 function buildPayloadMessage() {
-    const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor')
-
+    const el = document.getElementsByClassName('ace_text-layer')[0]
     const nodes = Array.from(el.childNodes);
+    console.log(nodes);
 
     // Check if the last item is <br>
     // Prims always adds <br> at the end
-    const lastNode = el.childNodes[el.childNodes.length - 1]
-    if (lastNode.nodeName === 'BR') {
-        nodes.pop()
-    }
+    // const lastNode = el.childNodes[el.childNodes.length - 1]
+    // if (lastNode.nodeName === 'BR') {
+    //     nodes.pop()
+    // }
 
     // Build node range
     let output = []
@@ -78,6 +80,9 @@ function buildPayloadMessage() {
                 pointer = pointer + node.length
             } else {
                 const nodeLength = countNodeLength(node)
+                if (!nodeLength) {
+                    console.log(node);
+                }
                 output.push({
                     length: nodeLength,
                     start: pointer,
@@ -88,13 +93,15 @@ function buildPayloadMessage() {
         }
     })
 
+    console.table(output);
+
     return output
 }
 
 function submit() {
     const pluginMessage = {
         type: 'APPLY_THEME',
-        code: primsjs.value.code,
+        code: aceEditor.value.aceEditor.getValue(),
         code_highlighted: buildPayloadMessage()
     }
 
