@@ -34,9 +34,11 @@ const emit = defineEmits(["set-load", "set-background"]);
 
 function loadConfig() {
   emit("set-load");
+  console.log(textCodeValue.value)
   currentConfig.value = codeMirror.fromTextArea(document.getElementById("editor"), {
     lineNumbers: true,
     theme: props.config.theme.toLowerCase(),
+    value: textCodeValue.value,
     mode: props.config.lang.toLowerCase(),
   });
 }
