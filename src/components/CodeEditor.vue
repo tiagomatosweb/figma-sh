@@ -16,6 +16,7 @@
         placeholder="Seu código aqui..."
         spellcheck="false"
         v-model="textCodeValue"
+        @keydown.tab.prevent.stop="tabber"
         name="code"
       ></textarea>
 
@@ -35,6 +36,7 @@ const props = defineProps({
   config: Object,
 });
 const emit = defineEmits(["set-load", "set-background"]);
+
 function loadTheme() {
   getHighlighter({
     theme: props.config.theme.toLowerCase(),
@@ -52,29 +54,14 @@ function loadTheme() {
   });
 }
 
+function tabber({ target: { selectionEnd, selectionStart, value } }) {
+  const start = selectionStart;
+  const end = selectionEnd;
+  textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
+}
+
 onMounted(async () => {
   loadTheme();
-
-  var el = document.querySelector("textarea");
-  el.onkeydown = function (e) {
-    if (e.keyCode === 9) {
-      // tab was pressed
-
-      // get caret position/selection
-      var val = this.value,
-        start = this.selectionStart,
-        end = this.selectionEnd;
-
-      // set textarea value to: text before caret + tab + text after caret
-      this.value = val.substring(0, start) + "\t" + val.substring(end);
-
-      // put caret at right position again
-      this.selectionStart = this.selectionEnd = start + 1;
-
-      // prevent the focus lose
-      return false;
-    }
-  };
 });
 
 watch(textCodeValue, async () => {
