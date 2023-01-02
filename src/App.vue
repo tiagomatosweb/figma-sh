@@ -35,8 +35,8 @@
             v-for="(lang, index) in config.langs"
             :key="index"
             @click="
-              setConfig('lang', lang.lang);
               setConfig('langTitle', lang.title);
+              setConfig('lang', lang.lang);
             "
             class="cursor-pointer hover:bg-gray-900/75 px-2 py-1 rounded-md"
           >
@@ -62,7 +62,7 @@
     </div>
 
     <div
-      class="rounded-lg py-4 pb-8 h-[500px] overflow-scroll"
+      class="rounded-lg py-2 pb-8 h-[500px] overflow-scroll px-2"
       :style="`background-color: ${backgroundColor}`"
     >
       <CodeEditor
@@ -82,7 +82,7 @@ import CodeEditor from "./components/CodeEditor.vue";
 import CreateRectangle from "./components/CreateRectangle.vue";
 import Dropdown from "./components/Dropdown.vue";
 const currentConfig = ref({
-  lang: "js",
+  lang: "javascript",
   langTitle: "Javascript",
   theme: "Dracula",
 });
@@ -92,16 +92,16 @@ const config = ref({
   themes: [
     "Dracula",
     "Nord",
-    "One-dark-pro",
-    "Material-darker",
-    "Dark-plus",
-    "Min-dark",
-    "Github-dark",
+    "Base16-dark",
+    "Material",
+    "seti",
+    "Night",
+    "Solarized",
   ],
   langs: [
     {
       title: "Javascript",
-      lang: "js",
+      lang: "Javascript",
     },
     {
       title: "PHP",
@@ -117,7 +117,7 @@ const config = ref({
     },
     {
       title: "HTML",
-      lang: "html",
+      lang: "xml",
     },
     {
       title: "JSX",
@@ -126,11 +126,7 @@ const config = ref({
     {
       title: "Vue",
       lang: "vue",
-    },
-    {
-      title: "Typescript",
-      lang: "typescript",
-    },
+    }
   ],
 });
 function copyCode() {

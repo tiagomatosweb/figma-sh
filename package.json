@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "codemirror": "5.65.11",
     "shiki": "^0.12.1",
     "vue": "^3.2.45"
   },

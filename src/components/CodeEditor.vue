@@ -1,100 +1,61 @@
 <template>
-  <div class="flex flex-row gap-2 px-2 min-h-full">
-    <div class="flex flex-col items-end px-2" id="countDisplay">
-      <span
-        class="text-gray-500 font-mono flex items-center justify-center"
-        id="count"
-        v-for="line in codeLines"
-        v-bind:key="line"
-        >{{ line }}</span
-      >
-    </div>
-    <div class="relative w-full min-h-full">
-      <textarea
-        id="codeContent"
-        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent overflow-hidden"
-        placeholder="Seu código aqui..."
-        spellcheck="false"
-        v-model="textCodeValue"
-        @keydown.tab.prevent.stop="tabber"
-        name="code"
-      ></textarea>
-
-      <div class="break-all text-white" v-html="htmlCode"></div>
-    </div>
-  </div>
+  <textarea id="editor" v-model="textCodeValue"></textarea>
 </template>
 
 <script setup>
 import { ref, watch, onMounted, defineEmits, defineProps } from "vue";
-import { getHighlighter } from "shiki";
+import * as codeMirror from "codemirror";
+
+//import themes
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/dracula.css";
+import "codemirror/theme/nord.css";
+import "codemirror/theme/base16-dark.css";
+import "codemirror/theme/material.css";
+import "codemirror/theme/seti.css";
+import "codemirror/theme/night.css";
+import "codemirror/theme/solarized.css";
+
+//import languages
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/mode/python/python.js';
+import 'codemirror/mode/php/php.js';
+import 'codemirror/mode/css/css.js';
+import 'codemirror/mode/xml/xml.js';
+import 'codemirror/mode/jsx/jsx.js';
+import 'codemirror/mode/vue/vue.js';
+
 const textCodeValue = ref("");
-const codeLines = ref(1);
-const htmlCode = ref("");
-const setTheme = ref({});
+const currentConfig = ref({})
 const props = defineProps({
   config: Object,
 });
 const emit = defineEmits(["set-load", "set-background"]);
 
-function loadTheme() {
-  getHighlighter({
+function loadConfig() {
+  emit("set-load");
+  currentConfig.value = codeMirror.fromTextArea(document.getElementById("editor"), {
+    lineNumbers: true,
     theme: props.config.theme.toLowerCase(),
-    langs: [props.config.lang],
-  }).then((highlighter) => {
-    setTheme.value = highlighter;
-    htmlCode.value = highlighter.codeToHtml(`${textCodeValue.value}`, {
-      lang: props.config.lang,
-    });
-    emit("set-load");
-    emit(
-      "set-background",
-      highlighter.getBackgroundColor(props.config.theme.toLowerCase())
-    );
+    mode: props.config.lang.toLowerCase(),
   });
 }
-
-function tabber({ target: { selectionEnd, selectionStart, value } }) {
-  const start = selectionStart;
-  const end = selectionEnd;
-  textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
+function updateConfig(){
+  codeMirror.defineMode()
+  emit("set-load");
 }
-
 onMounted(async () => {
-  loadTheme();
+  loadConfig();
 });
-
-watch(textCodeValue, async () => {
-  codeLines.value = textCodeValue.value.split("\n").length;
-  htmlCode.value = await setTheme.value.codeToHtml(`${textCodeValue.value}`, {
-    lang: props.config.lang,
-  });
-});
-
 watch(props.config, () => {
-  loadTheme();
+  updateConfig()
 });
 </script>
-
 <style>
-#codeContent {
-  margin: 0;
-  padding: 0;
-  outline: unset;
-  border: none;
-  resize: none !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 1em;
-  /* line-height: 27.3px; */
-}
-
-#count {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 1em;
-}
-textarea:focus {
-  outline: none;
+.CodeMirror {
+  border-radius: 15px;
+  padding-top: 2px;
+  height: 100%;
+  font-size: 15px;
 }
 </style>
