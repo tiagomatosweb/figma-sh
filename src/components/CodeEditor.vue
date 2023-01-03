@@ -16,7 +16,9 @@
         placeholder="Seu código aqui..."
         spellcheck="false"
         v-model="textCodeValue"
-        @keydown.tab.prevent.stop="tabber"
+        @keydown.tab.prevent.stop="tabber($event)"
+        @keyup.tab="textArea.setSelectionRange(currentSelection, currentSelection)"
+        ref="textArea"
         name="code"
       ></textarea>
 
@@ -33,6 +35,8 @@ const textCodeValue = ref("");
 const codeLines = ref(1);
 const htmlCode = ref("");
 const setTheme = ref({});
+const textArea = ref(null);
+const currentSelection = ref(0)
 const props = defineProps({
   config: Object,
 });
@@ -48,16 +52,17 @@ function loadTheme() {
       lang: props.config.lang,
     });
     emit("set-load");
-    emit("set-background", highlighter.getBackgroundColor(props.config.theme.toLowerCase())
+    emit(
+      "set-background",
+      highlighter.getBackgroundColor(props.config.theme.toLowerCase())
     );
   });
 }
-
-function tabber({ target: { selectionEnd, selectionStart, value } }) {
+async function tabber({ target: { selectionEnd, selectionStart, value } }) {
   const start = selectionStart;
   const end = selectionEnd;
-  
   textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
+  currentSelection.value = end + 2 
 }
 
 onMounted(async () => {
@@ -93,5 +98,5 @@ watch(props.config, () => {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
   font-size: 1em;
-}  
+}
 </style>
