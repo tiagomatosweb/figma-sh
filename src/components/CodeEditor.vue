@@ -9,10 +9,10 @@
         >{{ line }}</span
       >
     </div>
-    <div class="relative w-full min-h-full">
+    <div class="relative w-max min-h-full pr-2">
       <textarea
         id="codeContent"
-        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent overflow-hidden"
+        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent"
         placeholder="Seu código aqui..."
         spellcheck="false"
         v-model="textCodeValue"
@@ -20,7 +20,7 @@
         name="code"
       ></textarea>
 
-      <div class="break-all text-white" v-html="htmlCode"></div>
+      <div class="w-max break-all text-white" id="" v-html="htmlCode"></div>
     </div>
   </div>
 </template>
@@ -28,6 +28,7 @@
 <script setup>
 import { ref, watch, onMounted, defineEmits, defineProps } from "vue";
 import { getHighlighter } from "shiki";
+
 const textCodeValue = ref("");
 const codeLines = ref(1);
 const htmlCode = ref("");
@@ -47,9 +48,7 @@ function loadTheme() {
       lang: props.config.lang,
     });
     emit("set-load");
-    emit(
-      "set-background",
-      highlighter.getBackgroundColor(props.config.theme.toLowerCase())
+    emit("set-background", highlighter.getBackgroundColor(props.config.theme.toLowerCase())
     );
   });
 }
@@ -57,6 +56,7 @@ function loadTheme() {
 function tabber({ target: { selectionEnd, selectionStart, value } }) {
   const start = selectionStart;
   const end = selectionEnd;
+  
   textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
 }
 
@@ -87,14 +87,11 @@ watch(props.config, () => {
     "Liberation Mono", "Courier New", monospace;
   font-size: 1em;
   /* line-height: 27.3px; */
+  min-width: calc(100vw - (2em + 42px));
 }
-
 #count {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
   font-size: 1em;
-}
-textarea:focus {
-  outline: none;
-}
+}  
 </style>
