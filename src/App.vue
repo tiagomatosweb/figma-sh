@@ -146,3 +146,4 @@ function setBackground(payload) {
   backgroundColor.value = payload;
 }
 </script>
+
