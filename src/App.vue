@@ -78,8 +78,10 @@ function buildPayloadMessage() {
 
             if (node.data) {
                 pointer = pointer + node.length
+                console.log(node, node.length, pointer);
             } else {
                 const nodeLength = countNodeLength(node)
+                console.log(node, nodeLength, pointer, pointer + nodeLength);
                 output.push({
                     length: nodeLength,
                     start: pointer,
