@@ -21,9 +21,6 @@ figma.ui.onmessage = async (msg) => {
 
         // Set color by range
         msg.code_highlighted.forEach((node) => {
-            if (!node.end) {
-                console.log(node.end);
-            }
             text.setRangeFills(node.start, node.end, [
                 {
                     blendMode: 'NORMAL',

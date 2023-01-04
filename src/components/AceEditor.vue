@@ -31,7 +31,8 @@ onMounted(async () => {
         theme: 'ace/theme/monokai',
         // mode: 'ace/mode/powershell',
         mode: 'ace/mode/javascript',
-        tabSize: 4
+        // tabSize: 2,
+        // useSoftTabs: true
     })
 })
 

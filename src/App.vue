@@ -55,9 +55,11 @@ const aceEditor = ref(null)
 
 function buildPayloadMessage() {
     const el = document.getElementsByClassName('ace_text-layer')[0]
-    const nodes = Array.from(el.childNodes);
+    console.log('rootEl', el);
+    // const newNodes = Array.from(el.childNodes).map(n => n.childNodes).flat()
+    // console.log('newNodes', newNodes);
+    const nodes = Array.from(el.childNodes).map(n => n?.childNodes ? Array.from(n.childNodes) : false).flat()
     console.log(nodes);
-
     // Check if the last item is <br>
     // Prims always adds <br> at the end
     // const lastNode = el.childNodes[el.childNodes.length - 1]
@@ -80,9 +82,6 @@ function buildPayloadMessage() {
                 pointer = pointer + node.length
             } else {
                 const nodeLength = countNodeLength(node)
-                if (!nodeLength) {
-                    console.log(node);
-                }
                 output.push({
                     length: nodeLength,
                     start: pointer,
@@ -104,6 +103,8 @@ function submit() {
         code: aceEditor.value.aceEditor.getValue(),
         code_highlighted: buildPayloadMessage()
     }
+
+    console.log(pluginMessage);
 
     parent.postMessage({ pluginMessage }, '*')
 }
