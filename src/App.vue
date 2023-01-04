@@ -63,6 +63,18 @@ function buildPayloadMessage() {
             if (node.childNodes.length) {
                 // Remove nodes without classes (spaces)
                 const children = Array.from(node.childNodes)
+                // console.log(children[0].childNodes[0]);
+                    .map(o => {
+                        if (!o.classList.length || o.classList.contains('ace_indent-guide')) {
+                            return o.childNodes[0]
+                        }
+
+                        return o
+                        // o.classList.length ? o :
+                        // console.log(o.childNodes[0]);
+                        // console.log(window.getComputedStyle(o.childNodes).color);
+                    })
+
                 total = [...total, ...children]
             }
 
@@ -86,11 +98,12 @@ function buildPayloadMessage() {
 
         while (!(res = walker.next()).done) {
             let node = res.value
-
             if (node.data) {
                 pointer = pointer + node.length
+                console.log(node, node.length, pointer);
             } else {
                 const nodeLength = countNodeLength(node)
+                console.log(node, nodeLength, pointer, pointer + nodeLength);
                 output.push({
                     length: nodeLength,
                     start: pointer,
@@ -100,6 +113,7 @@ function buildPayloadMessage() {
             }
         }
     })
+    // function submit() {\n    const pluginMessage
 
     console.table(output);
 
