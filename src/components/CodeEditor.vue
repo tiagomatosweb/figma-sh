@@ -1,106 +1,88 @@
 <template>
-    <div
-        class="code-font text-sm leading-[1.4rem] flex-1 flex flex-row gap-3 overflow-scroll py-4"
+    <PrismEditor
+        id="prismEditor"
+        v-if="!loading"
+        v-model="codeText"
+        :highlight="buildHtml"
+        line-numbers
+        class="editor flex-1"
         :style="{ backgroundColor }"
-    >
-        <div class="flex flex-col items-end text-gray-600 min-w-[35px]">
-            <div
-                v-for="line in codeLineNumbers"
-                :key="line"
-            >{{ line }}
-            </div>
-        </div>
-
-        <div class="relative w-max">
-            <textarea
-                class="absolute text-sm leading-[1.4rem] min-w-max w-full h-full text-transparent bg-transparent outline-none resize-none caret-white p-0 m-o border-none focus:ring-0"
-                placeholder="Seu código aqui..."
-                spellcheck="false"
-                v-model="codeText"
-                @keydown.tab.prevent.stop="tabber($event)"
-                @keyup.tab="textAreaElement.setSelectionRange(currentSelection, currentSelection)"
-                ref="textAreaElement"
-                name="code"
-            />
-
-            <div
-                class="w-max"
-                v-html="codeHtml"
-            />
-        </div>
-    </div>
+    />
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import { getHighlighter } from 'shiki';
+import { PrismEditor } from 'vue-prism-editor';
+import 'vue-prism-editor/dist/prismeditor.min.css';
 
-const codeText = ref('');
-const codeHtml = ref('');
-const codeLineNumbers = ref(1);
-const textAreaElement = ref(null);
-const currentSelection = ref(0)
+const codeText = ref("const nodes = Array.from(el.childNodes);");
 
 const props = defineProps({
     theme: String,
     lang: String
 });
 
-async function tabber({ target: { selectionEnd, selectionStart, value } }) {
-    const start = selectionStart;
-    const end = selectionEnd;
-    codeText.value = `${value.substring(0, start)}  ${value.substring(end)}`;
-    currentSelection.value = end + 2
-}
+const localTheme = ref(props.theme)
+const localLang = ref(props.lang)
 
 const shiki = ref(null)
+const loading = ref(true)
 onMounted(async () => {
     shiki.value = await getHighlighter({
-        theme: props.theme,
-        langs: [props.lang],
+        theme: localTheme.value,
+        langs: [localLang.value],
     })
 
-    buildHtml()
-    calculateLineNumbers()
+    settBackgroundColor()
+
+    loading.value = false
 });
 
 function buildHtml() {
-    codeHtml.value = shiki.value.codeToHtml(`${codeText.value}`, {
-        lang: props.lang,
-        theme: props.theme,
+    const html = shiki.value.codeToHtml(`${codeText.value}`, {
+        theme: localTheme.value,
+        lang: localLang.value,
     });
 
     settBackgroundColor()
-}
-
-function calculateLineNumbers() {
-    codeLineNumbers.value = codeText.value.split('\n').length;
+    return  html
 }
 
 const backgroundColor = ref()
 function settBackgroundColor() {
-    backgroundColor.value = shiki.value.getBackgroundColor(props.theme)
+    backgroundColor.value = shiki.value.getBackgroundColor(localTheme.value)
 }
 
-watch(codeText, (vl) => {
-    calculateLineNumbers()
+watch(() => props.theme, async (vl) => {
+    await shiki.value.loadTheme(vl)
+    localTheme.value = vl
     buildHtml()
 });
 
 watch(() => props.lang, async (vl) => {
     await shiki.value.loadLanguage(vl)
+    localLang.value = vl
     buildHtml()
 });
 
-watch(() => props.theme, async (vl) => {
-    await shiki.value.loadTheme(vl)
-    buildHtml()
-});
+defineExpose({
+    code: codeText
+})
 </script>
 
-<style>
-.code-font {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+<style scoped>
+.editor {
+    color: #fff;
+    /* you must provide font-family font-size line-height. Example: */
+    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+    font-size: 14px;
+    line-height: 1.715;
+}
+:deep(.prism-editor__line-numbers) {
+    @apply text-white opacity-50;
+}
+:deep(.prism-editor__textarea) {
+    z-index: 9999 !important;
 }
 </style>

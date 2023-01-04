@@ -3,6 +3,7 @@
         <div class="shrink-0 w-52 bg-white border-r border-gray-300 p-4">
             <div class="space-y-2">
                 <div>
+                    {{ currentTheme }}
                     <label
                         for="theme"
                         class="block mb-1 text-xs font-medium"
@@ -54,7 +55,7 @@
         </div>
 
         <CodeEditor
-            ref="submit"
+            ref="codeEditor"
             :theme="currentTheme"
             :lang="currentLanguage"
         />
@@ -71,6 +72,7 @@ import { BUNDLED_THEMES, BUNDLED_LANGUAGES } from 'shiki'
 
 const currentTheme = ref('nord')
 const currentLanguage = ref('javascript')
+const codeEditor = ref(null)
 
 function buildPayloadMessage() {
     const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor')
@@ -107,7 +109,7 @@ function buildPayloadMessage() {
 function submit() {
     const pluginMessage = {
         type: 'APPLY_THEME',
-        code: primsjs.value.code,
+        code: codeEditor.value.code,
         code_highlighted: buildPayloadMessage()
     }
     parent.postMessage({ pluginMessage }, '*')
