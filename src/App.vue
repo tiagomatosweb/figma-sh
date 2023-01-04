@@ -142,15 +142,7 @@ function copyCode() {
 function setConfig(key, value) {
   currentConfig.value[key] = value;
 }
-function selectedTheme(payload) {
-  setConfig("theme", payload);
-}
-function selectedLang(payload) {
-  setConfig("lang", payload);
-  setBackground;
-}
 function setBackground(payload) {
   backgroundColor.value = payload;
 }
 </script>
-

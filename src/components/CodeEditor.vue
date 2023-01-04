@@ -12,7 +12,7 @@
     <div class="relative w-max min-h-full pr-2">
       <textarea
         id="codeContent"
-        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent"
+        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent overflow-hidden"
         placeholder="Seu código aqui..."
         spellcheck="false"
         v-model="textCodeValue"
@@ -30,7 +30,6 @@
 <script setup>
 import { ref, watch, onMounted, defineEmits, defineProps } from "vue";
 import { getHighlighter } from "shiki";
-
 const textCodeValue = ref("");
 const codeLines = ref(1);
 const htmlCode = ref("");
@@ -41,7 +40,6 @@ const props = defineProps({
   config: Object,
 });
 const emit = defineEmits(["set-load", "set-background"]);
-
 function loadTheme() {
   getHighlighter({
     theme: props.config.theme.toLowerCase(),
@@ -64,18 +62,15 @@ async function tabber({ target: { selectionEnd, selectionStart, value } }) {
   textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
   currentSelection.value = end + 2 
 }
-
 onMounted(async () => {
   loadTheme();
 });
-
 watch(textCodeValue, async () => {
   codeLines.value = textCodeValue.value.split("\n").length;
   htmlCode.value = await setTheme.value.codeToHtml(`${textCodeValue.value}`, {
     lang: props.config.lang,
   });
 });
-
 watch(props.config, () => {
   loadTheme();
 });
