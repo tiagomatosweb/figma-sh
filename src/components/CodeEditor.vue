@@ -12,7 +12,7 @@
     <div class="relative w-max min-h-full pr-2">
       <textarea
         id="codeContent"
-        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent"
+        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent overflow-hidden"
         placeholder="Seu código aqui..."
         spellcheck="false"
         v-model="textCodeValue"
