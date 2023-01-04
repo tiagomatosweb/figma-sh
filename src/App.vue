@@ -63,6 +63,8 @@ function buildPayloadMessage() {
         nodes.pop()
     }
 
+    console.log(nodes);
+
     // Build node range
     let output = []
     let pointer = 0
