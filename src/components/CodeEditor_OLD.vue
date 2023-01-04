@@ -1,0 +1,126 @@
+<template>
+    <div class="flex flex-row gap-2 px-2 min-h-full">
+        <div
+            class="flex flex-col items-end px-2"
+            id="countDisplay"
+        >
+      <span
+          class="text-gray-500 font-mono flex items-center justify-center"
+          id="count"
+          v-for="line in codeLines"
+          v-bind:key="line"
+      >{{ line }}</span
+      >
+        </div>
+        <div class="relative w-max min-h-full pr-2">
+      <textarea
+          id="codeContent"
+          class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent"
+          placeholder="Seu código aqui..."
+          spellcheck="false"
+          v-model="textCodeValue"
+          @keydown.tab.prevent.stop="tabber($event)"
+          @keyup.tab="textArea.setSelectionRange(currentSelection, currentSelection)"
+          ref="textArea"
+          name="code"
+      ></textarea>
+
+            <div
+                class="w-max break-all text-white"
+                id=""
+                v-html="htmlCode"
+            ></div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref, watch, onMounted, defineEmits, defineProps } from 'vue';
+import { getHighlighter } from 'shiki';
+
+const textCodeValue = ref('');
+const codeLines = ref(1);
+const htmlCode = ref('');
+const setTheme = ref({});
+const textArea = ref(null);
+const currentSelection = ref(0)
+const props = defineProps({
+    config: Object,
+});
+const emit = defineEmits(['set-load', 'set-background']);
+
+function loadTheme() {
+    getHighlighter({
+        theme: props.config.theme.toLowerCase(),
+        langs: [props.config.lang],
+    }).then((highlighter) => {
+        setTheme.value = highlighter;
+        htmlCode.value = highlighter.codeToHtml(`${textCodeValue.value}`, {
+            lang: props.config.lang,
+        });
+        emit('set-load');
+        emit(
+            'set-background',
+            highlighter.getBackgroundColor(props.config.theme.toLowerCase())
+        );
+    });
+}
+
+async function tabber({ target: { selectionEnd, selectionStart, value } }) {
+    const start = selectionStart;
+    const end = selectionEnd;
+    textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
+    currentSelection.value = end + 2
+}
+
+const shiki = ref()
+onMounted(async () => {
+    shiki.value = await getHighlighter({
+        theme: props.config.theme.toLowerCase(),
+        langs: [props.config.lang],
+    }).then((highlighter) => {
+        setTheme.value = highlighter;
+        htmlCode.value = highlighter.codeToHtml(`${textCodeValue.value}`, {
+            lang: props.config.lang,
+        });
+        emit('set-load');
+        emit(
+            'set-background',
+            highlighter.getBackgroundColor(props.config.theme.toLowerCase())
+        );
+    });
+   await loadTheme();
+});
+
+watch(textCodeValue, async () => {
+    codeLines.value = textCodeValue.value.split('\n').length;
+    htmlCode.value = await setTheme.value.codeToHtml(`${textCodeValue.value}`, {
+        lang: props.config.lang,
+    });
+});
+
+watch(props.config, () => {
+    loadTheme();
+});
+</script>
+
+<style>
+#codeContent {
+    margin: 0;
+    padding: 0;
+    outline: unset;
+    border: none;
+    resize: none !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+    font-size: 1em;
+    /* line-height: 27.3px; */
+    min-width: calc(100vw - (2em + 42px));
+}
+
+#count {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+    font-size: 1em;
+}
+</style>

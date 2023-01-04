@@ -1,102 +1,106 @@
 <template>
-  <div class="flex flex-row gap-2 px-2 min-h-full">
-    <div class="flex flex-col items-end px-2" id="countDisplay">
-      <span
-        class="text-gray-500 font-mono flex items-center justify-center"
-        id="count"
-        v-for="line in codeLines"
-        v-bind:key="line"
-        >{{ line }}</span
-      >
-    </div>
-    <div class="relative w-max min-h-full pr-2">
-      <textarea
-        id="codeContent"
-        class="absolute z-20 focus:outline-0 focus:ring-0 w-full min-h-full caret-white pt-[5px] bg-transparent text-transparent"
-        placeholder="Seu código aqui..."
-        spellcheck="false"
-        v-model="textCodeValue"
-        @keydown.tab.prevent.stop="tabber($event)"
-        @keyup.tab="textArea.setSelectionRange(currentSelection, currentSelection)"
-        ref="textArea"
-        name="code"
-      ></textarea>
+    <div
+        class="code-font text-sm leading-[1.4rem] flex-1 flex flex-row gap-3 overflow-scroll py-4"
+        :style="{ backgroundColor }"
+    >
+        <div class="flex flex-col items-end text-gray-600 min-w-[35px]">
+            <div
+                v-for="line in codeLineNumbers"
+                :key="line"
+            >{{ line }}
+            </div>
+        </div>
 
-      <div class="w-max break-all text-white" id="" v-html="htmlCode"></div>
+        <div class="relative w-max">
+            <textarea
+                class="absolute text-sm leading-[1.4rem] min-w-max w-full h-full text-transparent bg-transparent outline-none resize-none caret-white p-0 m-o border-none focus:ring-0"
+                placeholder="Seu código aqui..."
+                spellcheck="false"
+                v-model="codeText"
+                @keydown.tab.prevent.stop="tabber($event)"
+                @keyup.tab="textAreaElement.setSelectionRange(currentSelection, currentSelection)"
+                ref="textAreaElement"
+                name="code"
+            />
+
+            <div
+                class="w-max"
+                v-html="codeHtml"
+            />
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineEmits, defineProps } from "vue";
-import { getHighlighter } from "shiki";
+import { ref, watch, onMounted } from 'vue';
+import { getHighlighter } from 'shiki';
 
-const textCodeValue = ref("");
-const codeLines = ref(1);
-const htmlCode = ref("");
-const setTheme = ref({});
-const textArea = ref(null);
+const codeText = ref('');
+const codeHtml = ref('');
+const codeLineNumbers = ref(1);
+const textAreaElement = ref(null);
 const currentSelection = ref(0)
+
 const props = defineProps({
-  config: Object,
+    theme: String,
+    lang: String
 });
-const emit = defineEmits(["set-load", "set-background"]);
 
-function loadTheme() {
-  getHighlighter({
-    theme: props.config.theme.toLowerCase(),
-    langs: [props.config.lang],
-  }).then((highlighter) => {
-    setTheme.value = highlighter;
-    htmlCode.value = highlighter.codeToHtml(`${textCodeValue.value}`, {
-      lang: props.config.lang,
-    });
-    emit("set-load");
-    emit(
-      "set-background",
-      highlighter.getBackgroundColor(props.config.theme.toLowerCase())
-    );
-  });
-}
 async function tabber({ target: { selectionEnd, selectionStart, value } }) {
-  const start = selectionStart;
-  const end = selectionEnd;
-  textCodeValue.value = `${value.substring(0, start)}  ${value.substring(end)}`;
-  currentSelection.value = end + 2 
+    const start = selectionStart;
+    const end = selectionEnd;
+    codeText.value = `${value.substring(0, start)}  ${value.substring(end)}`;
+    currentSelection.value = end + 2
 }
 
+const shiki = ref(null)
 onMounted(async () => {
-  loadTheme();
+    shiki.value = await getHighlighter({
+        theme: props.theme,
+        langs: [props.lang],
+    })
+
+    buildHtml()
+    calculateLineNumbers()
 });
 
-watch(textCodeValue, async () => {
-  codeLines.value = textCodeValue.value.split("\n").length;
-  htmlCode.value = await setTheme.value.codeToHtml(`${textCodeValue.value}`, {
-    lang: props.config.lang,
-  });
+function buildHtml() {
+    codeHtml.value = shiki.value.codeToHtml(`${codeText.value}`, {
+        lang: props.lang,
+        theme: props.theme,
+    });
+
+    settBackgroundColor()
+}
+
+function calculateLineNumbers() {
+    codeLineNumbers.value = codeText.value.split('\n').length;
+}
+
+const backgroundColor = ref()
+function settBackgroundColor() {
+    backgroundColor.value = shiki.value.getBackgroundColor(props.theme)
+}
+
+watch(codeText, (vl) => {
+    calculateLineNumbers()
+    buildHtml()
 });
 
-watch(props.config, () => {
-  loadTheme();
+watch(() => props.lang, async (vl) => {
+    await shiki.value.loadLanguage(vl)
+    buildHtml()
+});
+
+watch(() => props.theme, async (vl) => {
+    await shiki.value.loadTheme(vl)
+    buildHtml()
 });
 </script>
 
 <style>
-#codeContent {
-  margin: 0;
-  padding: 0;
-  outline: unset;
-  border: none;
-  resize: none !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+.code-font {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
-  font-size: 1em;
-  /* line-height: 27.3px; */
-  min-width: calc(100vw - (2em + 42px));
-}
-#count {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
-  font-size: 1em;
 }
 </style>
