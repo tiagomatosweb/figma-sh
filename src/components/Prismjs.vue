@@ -15,7 +15,15 @@ import "../assets/themes/prism-material-oceanic.css";
 import { ref } from 'vue';
 import { usePrism } from '../composables/usePrism';
 
-const code = ref("console.log('hello world!')");
+const code = ref("function submit() {\n" +
+    "    const pluginMessage = {\n" +
+    "        type: 'APPLY_THEME',\n" +
+    "        code: aceEditor.value.aceEditor.getValue(),\n" +
+    "        code_highlighted: buildPayloadMessage()\n" +
+    "    }\n" +
+    "\n" +
+    "    parent.postMessage({ pluginMessage }, '*')\n" +
+    "}");
 const { highlighter } = usePrism()
 
 defineExpose({

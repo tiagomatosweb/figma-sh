@@ -88,6 +88,8 @@ function buildPayloadMessage() {
         }
     })
 
+    console.table(output);
+
     return output
 }
 
