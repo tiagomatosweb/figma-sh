@@ -58,7 +58,16 @@ function buildPayloadMessage() {
     console.log('rootEl', el);
     // const newNodes = Array.from(el.childNodes).map(n => n.childNodes).flat()
     // console.log('newNodes', newNodes);
-    const nodes = Array.from(el.childNodes).map(n => n?.childNodes ? Array.from(n.childNodes) : false).flat()
+    const nodes = Array.from(el.childNodes)
+        .reduce((total, node) => {
+            if (node.childNodes.length) {
+                // Remove nodes without classes (spaces)
+                const children = Array.from(node.childNodes)
+                total = [...total, ...children]
+            }
+
+            return total
+        }, [])
     console.log(nodes);
     // Check if the last item is <br>
     // Prims always adds <br> at the end
