@@ -12,7 +12,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { getHighlighter } from 'shiki';
+import { getHighlighter, setCDN } from 'shiki';
 import { PrismEditor } from 'vue-prism-editor';
 import 'vue-prism-editor/dist/prismeditor.min.css';
 
@@ -23,7 +23,7 @@ const codeText = ref("function submit() {\n" +
     "        code_highlighted: buildPayloadMessage()\n" +
     "    }\n" +
     "    parent.postMessage({ pluginMessage }, '*')\n" +
-    "}" +
+    "}\n\n" +
     "class LeadGenerationController extends Controller\n" +
     "{\n" +
     "    /**\n" +
@@ -55,6 +55,7 @@ const localLang = ref(props.lang)
 const shiki = ref(null)
 const loading = ref(true)
 onMounted(async () => {
+    setCDN('/src/assets/shiki/')
     shiki.value = await getHighlighter({
         theme: localTheme.value,
         langs: [localLang.value],
