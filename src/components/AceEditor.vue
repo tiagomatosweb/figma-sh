@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="h-full bg-gray-900">
         <div id="editor" />
     </div>
 </template>
@@ -24,7 +24,7 @@ onMounted(async () => {
     aceEditor.value = await ace.edit('editor', {
         value: code.value,
         maxLines: 20,
-        minLines: 10,
+        minLines: 20,
         fontSize: 14,
         theme: 'ace/theme/monokai',
         // mode: 'ace/mode/powershell',
@@ -33,9 +33,21 @@ onMounted(async () => {
         // tabSize: 2,
         useSoftTabs: true,
     })
+
+    console.log(window.getComputedStyle(aceEditor.value.container).backgroundColor);
 })
 
 defineExpose({
     aceEditor
 })
 </script>
+
+<style>
+    /*.ace-monokai .ace_paren {*/
+    /*    color: #89ddff;*/
+    /*}*/
+    /*.ace-monokai .ace_identifier + .ace_paren {*/
+    /*    !*color: #82aaff;*!*/
+    /*    color: red*/
+    /*}*/
+</style>
