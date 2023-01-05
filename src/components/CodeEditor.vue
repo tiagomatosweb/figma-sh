@@ -21,7 +21,6 @@
         ref="textArea"
         name="code"
       ></textarea>
-
       <div class="w-max break-all text-white" id="" v-html="htmlCode"></div>
     </div>
   </div>
@@ -29,7 +28,7 @@
 
 <script setup>
 import { ref, watch, onMounted, defineEmits, defineProps } from "vue";
-import { getHighlighter } from "shiki";
+import { getHighlighter, setCDN } from "shiki";
 const textCodeValue = ref("");
 const codeLines = ref(1);
 const htmlCode = ref("");
@@ -63,6 +62,7 @@ async function tabber({ target: { selectionEnd, selectionStart, value } }) {
   currentSelection.value = end + 2 
 }
 onMounted(async () => {
+  setCDN('/src/assets/shiki/')
   loadTheme();
 });
 watch(textCodeValue, async () => {
