@@ -1,12 +1,12 @@
 <template>
     <div>
-        <button @click="getValue">get value</button>
         <div id="editor" />
     </div>
 </template>
 
 <script setup>
 import './ace';
+// import ace from 'ace-builds';
 import { onMounted, ref } from 'vue';
 
 const code = ref("function submit() {\n" +
@@ -18,11 +18,9 @@ const code = ref("function submit() {\n" +
     "\n" +
     "    parent.postMessage({ pluginMessage }, '*')\n" +
     "}");
-const editorEl = ref();
 const aceEditor = ref(null);
 
 onMounted(async () => {
-    // console.log(editorEl.value);
     aceEditor.value = await ace.edit('editor', {
         value: code.value,
         maxLines: 20,
@@ -31,8 +29,9 @@ onMounted(async () => {
         theme: 'ace/theme/monokai',
         // mode: 'ace/mode/powershell',
         mode: 'ace/mode/javascript',
+        showFoldWidgets: false,
         // tabSize: 2,
-        // useSoftTabs: true
+        useSoftTabs: true,
     })
 })
 

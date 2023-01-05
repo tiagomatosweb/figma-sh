@@ -42,7 +42,6 @@
 
 <script setup>
 import { ref } from 'vue';
-// import Prismjs from './components/Prismjs.vue';
 import { walkTree } from './utils/walkTree';
 import { calculateRGB } from './utils/calculateRGB';
 import { countNodeLength } from './utils/countNodeLength'
@@ -50,47 +49,18 @@ import { usePrism } from './composables/usePrism';
 import AceEditor from './components/AceEditor.vue';
 
 const { languages, currentLanguage, theme } = usePrism();
-const primsjs = ref(null)
 const aceEditor = ref(null)
 
 function buildPayloadMessage() {
     const el = document.getElementsByClassName('ace_text-layer')[0]
-    console.log('rootEl', el);
-    // const newNodes = Array.from(el.childNodes).map(n => n.childNodes).flat()
-    // console.log('newNodes', newNodes);
     const nodes = Array.from(el.childNodes)
-        .reduce((total, node) => {
-            if (node.childNodes.length) {
-                // Remove nodes without classes (spaces)
-                const children = Array.from(node.childNodes)
-                // console.log(children[0].childNodes[0]);
-                    .map(o => {
-                        if (!o.classList.length || o.classList.contains('ace_indent-guide')) {
-                            return o.childNodes[0]
-                        }
-
-                        return o
-                        // o.classList.length ? o :
-                        // console.log(o.childNodes[0]);
-                        // console.log(window.getComputedStyle(o.childNodes).color);
-                    })
-
-                total = [...total, ...children]
-            }
-
-            return total
-        }, [])
-    console.log(nodes);
-    // Check if the last item is <br>
-    // Prims always adds <br> at the end
-    // const lastNode = el.childNodes[el.childNodes.length - 1]
-    // if (lastNode.nodeName === 'BR') {
-    //     nodes.pop()
-    // }
 
     // Build node range
     let output = []
-    let pointer = 0
+
+    // Need to start negative as ace editor doesn't use <div> to break lines instead of \n.
+    // So, it needs to count the line when the element with ace_line class arrives to the loop
+    let pointer = -1
 
     nodes.forEach((node) => {
         let walker = walkTree(node)
@@ -99,11 +69,12 @@ function buildPayloadMessage() {
         while (!(res = walker.next()).done) {
             let node = res.value
             if (node.data) {
-                pointer = pointer + node.length
-                console.log(node, node.length, pointer);
+                pointer += node.length
+            } else if (node.classList.contains('ace_line')) { // count 1 position - similar to \n
+                pointer += 1
             } else {
                 const nodeLength = countNodeLength(node)
-                console.log(node, nodeLength, pointer, pointer + nodeLength);
+                // console.log(node, nodeLength, pointer, pointer + nodeLength);
                 output.push({
                     length: nodeLength,
                     start: pointer,
@@ -111,6 +82,7 @@ function buildPayloadMessage() {
                     color: calculateRGB(window.getComputedStyle(node).color),
                 })
             }
+            // console.log(node);
         }
     })
     // function submit() {\n    const pluginMessage
