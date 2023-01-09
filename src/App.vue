@@ -69,7 +69,6 @@ import { walkTree } from './utils/walkTree';
 import { calculateRGB } from './utils/calculateRGB';
 import { countNodeLength } from './utils/countNodeLength'
 import { BUNDLED_THEMES, BUNDLED_LANGUAGES } from 'shiki'
-// 89DDFF
 const currentTheme = ref('material-theme')
 const currentLanguage = ref('php')
 const codeEditor = ref(null)
@@ -104,6 +103,8 @@ function buildPayloadMessage() {
             }
         }
     })
+
+    console.table(output);
     return output
 }
 function submit() {
