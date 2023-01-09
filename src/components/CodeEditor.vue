@@ -56,6 +56,7 @@ const shiki = ref(null)
 const loading = ref(true)
 onMounted(async () => {
     setCDN('https://figma-sh.vercel.app/')
+    // setCDN('http://127.0.0.1:5173/')
     shiki.value = await getHighlighter({
         theme: localTheme.value,
         langs: [localLang.value],

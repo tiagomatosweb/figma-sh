@@ -74,14 +74,17 @@ const currentLanguage = ref('php')
 const codeEditor = ref(null)
 
 function buildPayloadMessage() {
-    const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor')
+    const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor .shiki code')
+    console.log(el);
     const nodes = Array.from(el.childNodes);
+    console.log(nodes);
     // Check if the last item is <br>
     // Prims always adds <br> at the end
-    const lastNode = el.childNodes[el.childNodes.length - 1]
-    if (lastNode.nodeName === 'BR') {
-        nodes.pop()
-    }
+    // const lastNode = el.childNodes[el.childNodes.length - 1]
+    // if (lastNode.nodeName === 'BR') {
+    //     nodes.pop()
+    // }
+
     // Build node range
     let output = []
     let pointer = 0

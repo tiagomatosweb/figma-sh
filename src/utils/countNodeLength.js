@@ -4,7 +4,7 @@ export const countNodeLength = (node) => {
     if (node.childNodes.length) {
         // Element node
         node.childNodes.forEach((n) => {
-            lng = lng + countNodeLength(n, 'child')
+            lng = lng + countNodeLength(n)
         })
     } else {
         // Text node
