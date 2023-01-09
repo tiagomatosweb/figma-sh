@@ -13,7 +13,7 @@
                         class="block w-full rounded border-gray-300 py-2 pl-2.5 pr-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 text-xs"
                     >
                         <option
-                            v-for="theme in BUNDLED_THEMES"
+                            v-for="theme in [...BUNDLED_THEMES, 'material-theme']"
                             :key="theme"
                             :value="theme"
                         >
@@ -74,15 +74,7 @@ const codeEditor = ref(null)
 
 function buildPayloadMessage() {
     const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor .shiki code')
-    console.log(el);
     const nodes = Array.from(el.childNodes);
-    console.log(nodes);
-    // Check if the last item is <br>
-    // Prims always adds <br> at the end
-    // const lastNode = el.childNodes[el.childNodes.length - 1]
-    // if (lastNode.nodeName === 'BR') {
-    //     nodes.pop()
-    // }
 
     // Build node range
     let output = []
@@ -106,7 +98,7 @@ function buildPayloadMessage() {
         }
     })
 
-    console.table(output);
+    // console.table(output);
     return output
 }
 function submit() {
