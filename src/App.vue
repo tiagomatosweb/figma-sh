@@ -3,7 +3,6 @@
         <div class="shrink-0 w-52 bg-white border-r border-gray-300 p-4">
             <div class="space-y-2">
                 <div>
-                    {{ currentTheme }}
                     <label
                         for="theme"
                         class="block mb-1 text-xs font-medium"
