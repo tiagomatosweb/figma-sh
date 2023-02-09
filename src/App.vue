@@ -46,7 +46,7 @@ import { walkTree } from './utils/walkTree';
 import { calculateRGB } from './utils/calculateRGB';
 import { countNodeLength } from './utils/countNodeLength'
 import { usePrism } from './composables/usePrism';
-import AceEditor from './components/AceEditor.vue';
+import AceEditor from './components/AceEditor2.vue';
 
 const { languages, currentLanguage, theme } = usePrism();
 const aceEditor = ref(null)
@@ -54,6 +54,7 @@ const aceEditor = ref(null)
 function buildPayloadMessage() {
     const el = document.getElementsByClassName('ace_text-layer')[0]
     const nodes = Array.from(el.childNodes)
+    console.log(nodes);
 
     // Build node range
     let output = []
@@ -95,7 +96,7 @@ function buildPayloadMessage() {
 function submit() {
     const pluginMessage = {
         type: 'APPLY_THEME',
-        code: aceEditor.value.aceEditor.getValue(),
+        code: aceEditor.value.code,
         code_highlighted: buildPayloadMessage()
     }
 
