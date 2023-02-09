@@ -53,11 +53,7 @@
             </button>
         </div>
 
-        <CodeEditor
-            ref="submit"
-            :theme="currentTheme"
-            :lang="currentLanguage"
-        />
+        <CodeEditor ref="codeEditor" />
     </div>
 </template>
 
@@ -72,15 +68,18 @@ import { BUNDLED_THEMES, BUNDLED_LANGUAGES } from 'shiki'
 const currentTheme = ref('nord')
 const currentLanguage = ref('javascript')
 
+const codeEditor = ref()
+
 function buildPayloadMessage() {
-    const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor')
+    const el = document.getElementsByClassName('view-lines')[0]
     const nodes = Array.from(el.childNodes);
+    console.log(nodes);
     // Check if the last item is <br>
     // Prims always adds <br> at the end
-    const lastNode = el.childNodes[el.childNodes.length - 1]
-    if (lastNode.nodeName === 'BR') {
-        nodes.pop()
-    }
+    // const lastNode = el.childNodes[el.childNodes.length - 1]
+    // if (lastNode.nodeName === 'BR') {
+    //     nodes.pop()
+    // }
     // Build node range
     let output = []
     let pointer = 0
@@ -102,14 +101,17 @@ function buildPayloadMessage() {
             }
         }
     })
+
+    console.table(output);
     return output
 }
 function submit() {
     const pluginMessage = {
         type: 'APPLY_THEME',
-        code: primsjs.value.code,
+        code: codeEditor.value.getValue(),
         code_highlighted: buildPayloadMessage()
     }
+    console.log(pluginMessage);
     parent.postMessage({ pluginMessage }, '*')
 }
 

@@ -9,7 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@guolao/vue-monaco-editor": "^0.0.5",
     "@vueuse/core": "^9.10.0",
+    "monaco-editor": "^0.35.0",
     "shiki": "^0.12.1",
     "vue": "^3.2.45"
   },
@@ -21,6 +23,7 @@
     "tailwindcss": "^3.2.4",
     "vite": "^4.0.0",
     "vite-plugin-html": "^3.2.0",
+    "vite-plugin-monaco-editor": "^1.1.0",
     "vite-plugin-singlefile": "^0.13.2"
   }
 }
