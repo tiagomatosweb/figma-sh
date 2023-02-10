@@ -18,6 +18,8 @@ import { computed, defineComponent, onMounted, ref, shallowRef, watch } from 'vu
 import { Codemirror } from 'vue-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { getHighlighter, setCDN } from 'shiki';
+import { materialPalenight } from 'codemirror6-themes';
+import { oneDark } from '@codemirror/theme-one-dark'
 
 export default defineComponent({
     components: {
@@ -32,16 +34,29 @@ export default defineComponent({
                 theme: 'material-palenight',
                 lang: 'javascript',
             })
+
+            if (code.value) {
+                buildHtml(code.value)
+            }
         });
 
-        const html = ref()
         const code = ref(`console.log('Hello, world!')`)
-        watch(code, () => {
-            html.value = shiki.codeToHtml(`${code.value}`, {
+        const html = ref()
+
+        watch(code, (code) => buildHtml(code))
+
+        function buildHtml(code) {
+            if (!shiki) { return }
+            html.value = shiki.codeToHtml(code, {
                 theme: 'material-palenight',
                 lang: 'javascript',
-            }) ;
-        })
+            });
+        }
+
+        // watch(code, () => {
+        //     console.log('loo');
+        //     html.value =
+        // }, { immediate: true })
 
         // const html = computed(() => {
         //     console.log(shiki);
@@ -50,7 +65,7 @@ export default defineComponent({
         // })
 
 
-        const extensions = [javascript()]
+        const extensions = [javascript(), oneDark]
 
         // Codemirror EditorView instance ref
         const view = shallowRef()
