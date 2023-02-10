@@ -16,33 +16,7 @@ import { getHighlighter, setCDN } from 'shiki';
 import { PrismEditor } from 'vue-prism-editor';
 import 'vue-prism-editor/dist/prismeditor.min.css';
 
-const codeText = ref("function submit() {\n" +
-    "    const pluginMessage = {\n" +
-    "        type: 'APPLY_THEME',\n" +
-    "        code: codeEditor.value.code(),\n" +
-    "        code_highlighted: buildPayloadMessage()\n" +
-    "    }\n" +
-    "    parent.postMessage({ pluginMessage }, '*')\n" +
-    "}\n\n" +
-    "class LeadGenerationController extends Controller\n" +
-    "{\n" +
-    "    /**\n" +
-    "     * @throws \\MailerLiteApi\\Exceptions\\MailerLiteSdkException\n" +
-    "     */\n" +
-    "    public function store(LeadGenerationStoreRequest $request)\n" +
-    "    {\n" +
-    "        $input = $request->validated();\n" +
-    "        $subscriber = (new Mailerlite(config('services.mailerlite.api_token')))->subscribers();\n" +
-    "\n" +
-    "        return $subscriber->create([\n" +
-    "            'name'   => $input['name'],\n" +
-    "            'email'  => $input['email'],\n" +
-    "            'groups' => [\n" +
-    "                $input['group_id'],\n" +
-    "            ]\n" +
-    "        ]);\n" +
-    "    }\n" +
-    "}");
+const codeText = ref('');
 
 const props = defineProps({
     theme: String,
