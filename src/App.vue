@@ -55,8 +55,6 @@
 
         <CodeEditor
             ref="codeEditor"
-            :theme="currentTheme"
-            :lang="currentLanguage"
         />
     </div>
 </template>
@@ -64,7 +62,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import CodeEditor from './components/CodeEditor.vue';
+import CodeEditor from './components/CodeEditorMirror.vue';
 import { walkTree } from './utils/walkTree';
 import { calculateRGB } from './utils/calculateRGB';
 import { countNodeLength } from './utils/countNodeLength'
@@ -74,7 +72,7 @@ const currentLanguage = ref('php')
 const codeEditor = ref(null)
 
 function buildPayloadMessage() {
-    const el = document.getElementById('prismEditor').querySelector('.prism-editor__editor .shiki code')
+    const el = document.getElementById('shiki').querySelector('code')
     const nodes = Array.from(el.childNodes);
 
     // Build node range
@@ -99,7 +97,7 @@ function buildPayloadMessage() {
         }
     })
 
-    // console.table(output);
+    console.table(output);
     return output
 }
 function submit() {
