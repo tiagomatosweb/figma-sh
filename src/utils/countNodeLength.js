@@ -8,8 +8,7 @@ export const countNodeLength = (node) => {
         })
     } else {
         // Text node
-        lng = lng + node.length
+        lng = lng + (node.length || 1) // when the node is empty means empty line, so we add 1 character
     }
-
     return lng
 }
